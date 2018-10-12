@@ -2,6 +2,7 @@ package com.example.android.activitytest;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class FirstActivity extends AppCompatActivity {
+public class FirstActivity extends BaseActivity {
 
     /**
      * Dispatch incoming result to the correct fragment.
@@ -29,13 +30,15 @@ public class FirstActivity extends AppCompatActivity {
                     String returnData=data.getStringExtra("data_return");
                     Log.d("FirstActivity",returnData);
                 }
+                break;
             default:
         }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("FirstActivity",this.toString());
         setContentView(R.layout.first_layout);
         Button button1=findViewById(R.id.button_1);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -56,11 +59,25 @@ public class FirstActivity extends AppCompatActivity {
 //                Intent intent = new Intent(FirstActivity.this,SecondActivity.class);
 //                intent.putExtra("extra_data",data);
 //                startActivity(intent);
-                Intent intent=new Intent(FirstActivity.this,SecondActivity.class);
-                startActivityForResult(intent,1);
+//                Intent intent=new Intent(FirstActivity.this,SecondActivity.class);
+//                startActivityForResult(intent,1);
+                //Intent intent=new Intent(FirstActivity.this,SecondActivity.class);
+                //startActivity(intent);
+                SecondActivity.actionStart(FirstActivity.this,"data1","data2");
             }
         });
 
+        if(savedInstanceState!=null) {
+            String tempData=savedInstanceState.getString("data_key");
+            Log.d("FirstActivity",tempData);
+        }
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("FirstActivity","onRestart");
     }
 
     //重写方法，第一个参数用于指定我们通过哪一个资源文件来创建菜单，第二个参数用于指定我们的菜单项添加到哪一个Menu对象当中
@@ -82,5 +99,13 @@ public class FirstActivity extends AppCompatActivity {
             default:
         }
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String tempData="Something you just typed";
+        outState.putString("data_key",tempData);
+        Log.d("FirstActivity","call onSaveInstanceState");
     }
 }
